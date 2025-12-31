@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Insurance Cost Predictor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .form-container {
+            padding: 40px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+
+        .predict-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .predict-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .result-container {
+            margin-top: 30px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+        }
+
+        .result-container.show {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-amount {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin: 15px 0;
+        }
+
+        .result-text {
+            font-size: 1.2em;
+            color: #666;
+        }
+
+        .info-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-top: 1px solid #e1e5e9;
+        }
+
+        .info-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .info-section p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .features-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .feature-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #4facfe;
+        }
+
+        .feature-item strong {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 Medical Insurance Cost Predictor</h1>
+            <p>Get an estimate of your medical insurance costs using machine learning</p>
+        </div>
+
+        <div class="form-container">
+            <form id="predictionForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="age">Age (years)</label>
+                        <input type="number" id="age" name="age" min="18" max="100" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sex">Gender</label>
+                        <select id="sex" name="sex" required>
+                            <option value="">Select Gender</option>
+                            <option value="0">Male</option>
+                            <option value="1">Female</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bmi">BMI (Body Mass Index)</label>
+                        <input type="number" id="bmi" name="bmi" step="0.1" min="10" max="50" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="children">Number of Children</label>
+                        <input type="number" id="children" name="children" min="0" max="10" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="smoker">Smoking Status</label>
+                        <select id="smoker" name="smoker" required>
+                            <option value="">Select Status</option>
+                            <option value="0">Yes (Smoker)</option>
+                            <option value="1">No (Non-smoker)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="region">Region</label>
+                        <select id="region" name="region" required>
+                            <option value="">Select Region</option>
+                            <option value="0">Southeast</option>
+                            <option value="1">Southwest</option>
+                            <option value="2">Northeast</option>
+                            <option value="3">Northwest</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="predict-btn">🔮 Predict Insurance Cost</button>
+            </form>
+
+            <div id="resultContainer" class="result-container">
+                <h3>Predicted Insurance Cost</h3>
+                <div id="resultAmount" class="result-amount">$0</div>
+                <p class="result-text">This is an estimated annual insurance cost based on the provided information.</p>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h3>📊 About This Prediction Model</h3>
+            <p>This medical insurance cost predictor uses a Linear Regression machine learning model trained on historical insurance data. The model considers multiple factors to provide cost estimates.</p>
+            
+            <div class="features-list">
+                <div class="feature-item">
+                    <strong>Age:</strong> Older individuals typically have higher insurance costs
+                </div>
+                <div class="feature-item">
+                    <strong>BMI:</strong> Body Mass Index affects health risk assessment
+                </div>
+                <div class="feature-item">
+                    <strong>Smoking:</strong> Smoking significantly increases insurance premiums
+                </div>
+                <div class="feature-item">
+                    <strong>Children:</strong> Number of dependents covered
+                </div>
+                <div class="feature-item">
+                    <strong>Region:</strong> Geographic location affects healthcare costs
+                </div>
+                <div class="feature-item">
+                    <strong>Gender:</strong> Statistical factor in insurance calculations
+                </div>
+            </div>
+            
+            <p style="margin-top: 20px; font-style: italic; color: #888;">
+                <strong>Disclaimer:</strong> This is a predictive model for educational purposes. Actual insurance costs may vary based on many additional factors not included in this model.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('predictionForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const age = parseFloat(document.getElementById('age').value);
+            const sex = parseFloat(document.getElementById('sex').value);
+            const bmi = parseFloat(document.getElementById('bmi').value);
+            const children = parseFloat(document.getElementById('children').value);
+            const smoker = parseFloat(document.getElementById('smoker').value);
+            const region = parseFloat(document.getElementById('region').value);
+            
+            // Validate inputs
+            if (isNaN(age) || isNaN(sex) || isNaN(bmi) || isNaN(children) || isNaN(smoker) || isNaN(region)) {
+                alert('Please fill in all fields with valid values.');
+                return;
+            }
+            
+            // Show loading state
+            const button = document.querySelector('.predict-btn');
+            const originalText = button.textContent;
+            button.textContent = '🔄 Predicting...';
+            button.disabled = true;
+            
+            try {
+                // Send data to Flask backend
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        age: age,
+                        sex: sex,
+                        bmi: bmi,
+                        children: children,
+                        smoker: smoker,
+                        region: region
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Display result
+                    document.getElementById('resultAmount').textContent = '$' + result.prediction.toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                    
+                    document.getElementById('resultContainer').classList.add('show');
+                    
+                    // Scroll to result
+                    document.getElementById('resultContainer').scrollIntoView({ 
+                        behavior: 'smooth' 
+                    });
+                } else {
+                    alert('Error making prediction: ' + result.error);
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error connecting to server. Please make sure the Flask server is running.');
+            } finally {
+                // Reset button
+                button.textContent = originalText;
+                button.disabled = false;
+            }
+        });
+
+        // BMI Calculator helper
+        document.getElementById('bmi').addEventListener('focus', function() {
+            if (!this.value) {
+                const height = prompt('Optional: Enter your height in cm to calculate BMI automatically:');
+                const weight = prompt('Optional: Enter your weight in kg:');
+                
+                if (height && weight) {
+                    const heightM = parseFloat(height) / 100;
+                    const bmi = parseFloat(weight) / (heightM * heightM);
+                    this.value = bmi.toFixed(1);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
