@@ -38,4 +38,4 @@ To run this project on your local machine:
 
 1. **Clone the repository:**
    ```bash
-   git clone [https://github.com/asmitsaw/Medical-Insuarance-Cost-Predecition.git](https://github.com/asmitsaw/Medical-Insuarance-Cost-Predecition.git)
+   git clone https://github.com/asmitsaw/Medical-Insuarance-Cost-Predecition.git
